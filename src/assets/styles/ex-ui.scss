@@ -1,0 +1,273 @@
+* {
+    margin: 0;
+    padding: 0
+}
+
+img {
+    max-width: 100%;
+}
+
+table {
+    margin: 0;
+    padding: 0
+}
+
+.ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis; //文本溢出显示省略号
+    white-space: nowrap; //文本不会换行
+}
+
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 130px;
+    height: 130px;
+    line-height: 130px;
+    text-align: center;
+}
+
+.avatar {
+    width: 130px;
+    height: 130px;
+    display: block;
+}
+
+.table-flex {
+    flex: 1
+}
+
+.ex-select-auto {
+    width: 100%
+}
+
+.form-fieldset-spiler {
+    font-size: 14px;
+    border-bottom: 1px dashed #dcdfe6;
+    margin: 10px 0;
+    padding-bottom: 6px;
+    position: relative;
+}
+
+.form-fieldset-spiler i {
+    float: left;
+    width: 4px;
+    height: 14px;
+    margin: 4px 10px 0 1px;
+    background: #047dc6;
+}
+
+.form-fieldset-spiler .form-field-set-slot {
+    position: absolute;
+    right: 0px;
+    top: -2px;
+}
+
+.ex-form-inline.small .el-input {
+    width: 180px;
+}
+
+.ex-form-inline .el-form-item {
+    width: 100%;
+}
+
+.ex-form-inline .el-input {
+    width: 100% !important;
+}
+
+.ex-form-inline.small .el-select {
+    width: 180px;
+}
+
+.ex-form-inline .el-select {
+    width: 220px;
+}
+
+.ex-form-inline .ex-btn {
+    margin-left: 15px;
+}
+
+.flex-auto {
+    flex: 1 1 0;
+}
+
+/* 通用包装 */
+.ex-page-container {
+    padding: 8px 12px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+    display: flex;
+    box-sizing: border-box;
+    height: 100%;
+    background-color: #f0f2f5;
+}
+
+.container-left {
+    height: 100%;
+}
+
+.container-right {
+    height: 100%;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+.ex-page-scroll-y {
+    height: 100%;
+    overflow: hidden scroll;
+}
+
+/* 定制整个滚动条的宽度和背景 */
+.ex-page-scroll-y::-webkit-scrollbar {
+    width: 8px;
+    /* 控制滚动条的宽度 */
+    height: 8px;
+    /* 控制水平滚动条的高度 */
+    background-color: #f9f9f9;
+    /* 滚动条的背景色 */
+}
+
+/* 定制滚动条滑块 */
+.ex-page-scroll-y::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    /* 滑块的颜色 */
+    border-radius: 4px;
+    /* 滑块的圆角 */
+    border: 2px solid #f9f9f9;
+    /* 滑块边缘的颜色，与滚动条背景色一致可以产生“无边界”的效果 */
+}
+
+/* 定制滚动条滑道（滑块外部的部分） */
+.ex-page-scroll-y::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+    /* 滑道的背景色 */
+    border-radius: 4px;
+    /* 滑道的圆角 */
+}
+
+/* 去除滚动条的上下箭头 */
+.ex-page-scroll-y::-webkit-scrollbar-button {
+    display: none;
+    /* 不显示上下箭头 */
+}
+
+.scrollBar::-webkit-scrollbar {
+    width: 8px;
+    /* 控制滚动条的宽度 */
+    height: 8px;
+    /* 控制水平滚动条的高度 */
+    background-color: #f9f9f9;
+    /* 滚动条的背景色 */
+}
+
+.scrollBar::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    /* 滑块的颜色 */
+    border-radius: 4px;
+    /* 滑块的圆角 */
+    border: 2px solid #f9f9f9;
+    /* 滑块边缘的颜色，与滚动条背景色一致可以产生“无边界”的效果 */
+}
+
+.scrollBar::-webkit-scrollbar-track {
+    background-color: transparent;
+    /* 滑道的背景色 */
+    border-radius: 4px;
+    /* 滑道的圆角 */
+}
+
+/* 去除滚动条的上下箭头 */
+.scrollBar::-webkit-scrollbar-button {
+    display: none;
+    /* 不显示上下箭头 */
+}
+
+.ex-table-page-body {
+    display: flex;
+    overflow: hidden;
+    flex: 1;
+}
+
+.ex-action-box-left,
+.ex-action-box-right {
+    display: flex;
+
+    .el-button,
+    .el-radio-group {
+        margin-right: 10px
+    }
+}
+
+.ex-search {
+    padding: 0 12px;
+    position: relative;
+
+    .ex-search-box {}
+}
+
+.el-form--inline {
+    .el-form-item {
+        margin-right: 0;
+        margin-bottom: 4px;
+    }
+}
+
+.ex-action {
+    display: flex;
+    justify-content: space-between;
+    flex-flow: row;
+    align-items: center;
+    background-color: color-mix(in srgb, #fff, #181d1f 2%);
+    padding: 6px 0;
+}
+
+.ex-noWarp {
+    .el-form-item__content {
+        flex-wrap: nowrap;
+
+        .el-input {
+            &:last-child {
+                margin-left: 15px;
+            }
+        }
+    }
+
+}
+
+.ex-search-drawer .el-drawer__body {
+    overflow-x: hidden;
+}
+
+.ex-table-page-body .el-scrollbar__view {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.el-scrollbar .el-scrollbar__view {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+/* 出现单元格样式,类名 */
+.ex-table-border .el-table__cell {
+    border-right: 1px solid #d9dfe7 !important;
+}
+
+.ex-table-border .el-table tbody tr td:hover {
+    background: #d9dfe7;
+    cursor: pointer;
+}
+
+.ex-search-page {
+    background: white;
+    padding: 8px;
+    border-radius: 2px;
+}
