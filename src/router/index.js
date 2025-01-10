@@ -79,6 +79,12 @@ export const constantRoutes = [
         name: 'renderConfig',
         meta: { title: '页面配置'}
       },
+      {
+        path: 'language',
+        component: () => import('@/components/sys/LowCode/MonacoEditor/index'),
+        name: 'language',
+        meta: { title: '多语言配置'}
+      },
     ]
   },
   {

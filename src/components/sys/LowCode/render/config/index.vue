@@ -28,8 +28,9 @@
             :label="parseFlag(item, index)" :name="item.name"></el-tab-pane>
         </el-tabs>
         <div class="btn-position-box">
-          <el-button type="info" @click="dialogFormVisible = true">新增弹窗</el-button>
           <el-button type="primary" @click="handleBack">返回</el-button>
+          <el-button type="primary" @click="handleSettingLanguage">配置语言</el-button>
+          <el-button type="info" @click="dialogFormVisible = true">新增弹窗</el-button>
           <el-button type="success" @click="handleSave($event, true)">保存并返回</el-button>
           <el-button type="success" @click="handleSave">保存</el-button>
         </div>
@@ -488,6 +489,15 @@ const handleDeleteDialog = (name) => {
  */
 const handleBack = () => {
   router.go(-1)
+}
+/**
+ * 语言环境配置
+ */
+ const handleSettingLanguage =()=>{
+  window.open(
+  `${window.location.origin}/system/render/language`,
+  "_blank"
+);
 }
 /**
  * 保存数据
