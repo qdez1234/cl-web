@@ -60,6 +60,8 @@ import { SetFilterModule } from "@ag-grid-enterprise/set-filter";
 import { SparklinesModule } from "@ag-grid-enterprise/sparklines";
 import { StatusBarModule } from "@ag-grid-enterprise/status-bar";
 
+import { addAncestors } from "../config/index.js"
+
 // 中文翻译
 import AG_GRID_LOCALE_CN from "./Language/zh-CN";
 // 操作按钮
@@ -141,6 +143,10 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  gridRowKey: {
+    type: String,
+    default: 'id'
+  },
   gridGroupParams: {
     type: Object,
     default: () => ({})
@@ -194,13 +200,21 @@ const defaultColDef = {
  * 配置分组path
  * @param data 
  */
-const getDataPath = function (data) {
-  return data.ancestors.split(','); // 根据 ancestors 构建树的层级路径
-}
+ const getDataPath = function (data) {
+  // 如果 ancestors 为 '0' 或空，返回当前节点的路径
+  if (!data.pathAncestors || data.pathAncestors == '') {
+    return [data[props.gridRowKey]];
+  }
+
+  // 根据 ancestors 构建层级路径
+  let ancestors = data.pathAncestors;
+  let path = ancestors.split(',');
+  path.push(data[props.gridRowKey]);
+  return path;
+};
 /**
  * 配置分组字段是哪个
  */
-console.log(props.gridGroupParams)
 const autoGroupColumnDef = ref({
   headerName: props.gridGroupParams.headerName,
   field: props.gridGroupParams.field,
@@ -460,6 +474,8 @@ const sendDataAPI = () => {
   }).then((res) => {
     let data = res.rows || res.data;
     pageTotal.value = res.total
+    // 开启扁平化分组
+    if (props.gridGroup) data = addAncestors(data, props.gridRowKey)
     rowData.value = data
     gridApi.value.refreshCells();
     emit("HandleChange", res.data);

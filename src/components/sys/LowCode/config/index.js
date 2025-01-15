@@ -22,6 +22,7 @@ export let fileAddress = 'http://192.168.18.166:88'
 
 import app from "../../../../main";
 
+import { ElMessage } from 'element-plus'
 // 自定义方法: 获取单元格编辑器
 export function getCellEditor(ele) {
     if (ele.dictionary) return 'CustomSelectDict'
@@ -59,6 +60,9 @@ export function getCellRenderer(ele) {
         case 4:
             ele.editable = false
             return 'CustomCheck';
+        case 5:
+            ele.editable = false
+            return 'CustomSwitch';
         default:
             return null;
     }
@@ -106,8 +110,8 @@ export function processList(ele) {
             child.valueGetter = (params) => {
                 try {
                     // 使用 Function 构造函数动态生成表达式
-                    const expression = new Function('params', 'route', `${child.expression}`);
-                    return expression(params.data, route); // 执行表达式并返回结果
+                    const expression = new Function('params', 'route', 'message', `${child.expression}`);
+                    return expression(params.data, route, ElMessage); // 执行表达式并返回结果
                 } catch (e) {
                     console.error('Error evaluating expression:', e);
                     return '表达式错误'; // 返回自定义错误信息
@@ -227,3 +231,23 @@ export function buildTree(departmentData) {
     });
     return tree;
 }
+/**
+ * 新增ancestorss字段
+ * @param {*} nodes 
+ * @returns 
+ */
+export function addAncestors(data,key) {
+  // 创建一个 map 用于快速查找节点
+  const nodeMap = Object.fromEntries(data.map(node => [node[key], node]));
+  // 给每个节点添加 pathAncestors 字段
+  data.forEach(node => {
+    const ancestors = [];
+    let currentId = node.parentId;
+    while (currentId && nodeMap[currentId]) {
+      ancestors.unshift(currentId);
+      currentId = nodeMap[currentId].parentId;
+    }
+    node.pathAncestors = ancestors.join(',');
+  });
+  return data;
+  }

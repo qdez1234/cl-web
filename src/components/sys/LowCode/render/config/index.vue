@@ -442,7 +442,7 @@ const handleTabsClick = (ele) => {
  * @str 目标执行函数字符串
  */
 const updateMethods = (str) => {
-  if (route.path == '/system/render/config') return
+  if (route.path == '/system/render/config') return-
   eval(str)
 }
 /**
