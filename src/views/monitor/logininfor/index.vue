@@ -8,30 +8,30 @@
                <el-row :gutter="20" class="ex-form-row">
                   <el-col :md="6">
                      <el-form-item label="登录地址" prop="ipaddr">
-               <el-input v-model="queryParams.ipaddr" placeholder="请输入登录地址" clearable style="width: 240px;"
-                  @keyup.enter="handleQuery" />
-            </el-form-item>
+                        <el-input v-model="queryParams.ipaddr" placeholder="请输入登录地址" clearable 
+                           @keyup.enter="handleQuery" />
+                     </el-form-item>
                   </el-col>
                   <el-col :md="6">
                      <el-form-item label="用户名称" prop="userName">
-               <el-input v-model="queryParams.userName" placeholder="请输入用户名称" clearable style="width: 240px;"
-                  @keyup.enter="handleQuery" />
-            </el-form-item>
+                        <el-input v-model="queryParams.userName" placeholder="请输入用户名称" clearable 
+                           @keyup.enter="handleQuery" />
+                     </el-form-item>
                   </el-col>
                   <el-col :md="6">
                      <el-form-item label="状态" prop="status">
-               <el-select v-model="queryParams.status" placeholder="登录状态" clearable style="width: 240px">
-                  <el-option v-for="dict in sys_common_status" :key="dict.value" :label="dict.label"
-                     :value="dict.value" />
-               </el-select>
-            </el-form-item>
+                        <el-select v-model="queryParams.status" placeholder="登录状态" clearable>
+                           <el-option v-for="dict in sys_common_status" :key="dict.value" :label="dict.label"
+                              :value="dict.value" />
+                        </el-select>
+                     </el-form-item>
                   </el-col>
                   <el-col :md="6">
                      <el-form-item label="登录时间">
-               <el-date-picker v-model="dateRange" value-format="YYYY-MM-DD HH:mm:ss" type="daterange"
-                  range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"
-                  :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"></el-date-picker>
-            </el-form-item>
+                        <el-date-picker v-model="dateRange" value-format="YYYY-MM-DD HH:mm:ss" type="daterange"
+                           range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"
+                           :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"></el-date-picker>
+                     </el-form-item>
                   </el-col>
                   <el-col :md="4">
                      <el-button class="filter-item" type="primary" @click="handleQuery">搜索</el-button>
@@ -44,14 +44,14 @@
             <el-form :model="queryParams" ref="queryForm" label-width="80px">
                <el-row :gutter="20" class="ex-form-row">
                   <el-col :md="20">
-                     <el-button class="filter-item" v-hasPermi="['monitor:logininfor:remove']" type="primary" icon="Delete"
-                        @click="handleBatchDelete">删除</el-button>
-                     <el-button class="filter-item" v-hasPermi="['monitor:logininfor:remove']" type="primary" icon="Delete"
-                        @click="handleClean">清空</el-button>
-                        <el-button class="filter-item" v-hasPermi="['monitor:logininfor:unlock']" type="primary" icon="Unlock"
-                        @click="handleUnlock">解锁</el-button>
-                     <el-button class="filter-item" v-hasPermi="['monitor:logininfor:export']" type="primary" icon="Download"
-                        @click="handleExport">导出</el-button>
+                     <el-button class="filter-item" v-hasPermi="['monitor:logininfor:remove']" type="primary"
+                        icon="Delete" @click="handleBatchDelete">删除</el-button>
+                     <el-button class="filter-item" v-hasPermi="['monitor:logininfor:remove']" type="primary"
+                        icon="Delete" @click="handleClean">清空</el-button>
+                     <el-button class="filter-item" v-hasPermi="['monitor:logininfor:unlock']" type="primary"
+                        icon="Unlock" @click="handleUnlock">解锁</el-button>
+                     <el-button class="filter-item" v-hasPermi="['monitor:logininfor:export']" type="primary"
+                        icon="Download" @click="handleExport">导出</el-button>
                   </el-col>
                </el-row>
             </el-form>
@@ -225,7 +225,7 @@ const queryParams = ref({
 
 /** 查询角色列表 */
 function getList() {
-  gridRef.value.HandleQueryData(queryParams.value)
+   gridRef.value.HandleQueryData(queryParams.value)
 }
 
 /** 搜索按钮操作 */
@@ -258,12 +258,12 @@ function handleSortChange(column, prop, order) {
 }
 
 function handleBatchDelete() {
-  let ids = gridRef.value.HandleGetSelectRow().map(ele => ele.infoId)
-  handleDelete({}, ids.join(','))
+   let ids = gridRef.value.HandleGetSelectRow().map(ele => ele.infoId)
+   handleDelete({}, ids.join(','))
 }
 
 /** 删除按钮操作 */
-function handleDelete(row,ids) {
+function handleDelete(row, ids) {
    const infoIds = row.infoId || ids;
    proxy.$modal.confirm('是否确认删除访问编号为"' + infoIds + '"的数据项?').then(function () {
       return delLogininfor(infoIds);
