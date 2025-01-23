@@ -200,7 +200,7 @@ const defaultColDef = {
  * 配置分组path
  * @param data 
  */
- const getDataPath = function (data) {
+const getDataPath = function (data) {
   // 如果 ancestors 为 '0' 或空，返回当前节点的路径
   if (!data.pathAncestors || data.pathAncestors == '') {
     return [data[props.gridRowKey]];
@@ -226,13 +226,15 @@ const autoGroupColumnDef = ref({
  * id节点标识
  * @param params 
  */
-const getRowId = (params) => {
-  if (params.data.id !== undefined && params.data.id !== null) {
-    return params.data.id
+ const getRowId = (params) => {
+  let key = params.data[props.gridRowKey]
+  if (key !== undefined && key !== null) {
+    return String(key)
   }
   // 处理没有 id 的情况，比如使用行索引
   return params.data.uuid;
 };
+
 
 // 表格数据字段
 const rowData = ref([]);
@@ -476,6 +478,7 @@ const sendDataAPI = () => {
     pageTotal.value = res.total
     // 开启扁平化分组
     if (props.gridGroup) data = addAncestors(data, props.gridRowKey)
+    console.log(data,'数据')
     rowData.value = data
     gridApi.value.refreshCells();
     emit("HandleChange", res.data);

@@ -266,8 +266,21 @@ table {
     cursor: pointer;
 }
 
-.ex-search-page {
+.ex-tree-box {
+    width: 220px;
+    height: calc(100% - 40px);
+    padding: 10px;
     background: white;
-    padding: 8px;
-    border-radius: 2px;
+    position: relative;
+}
+
+.ex-form-row {
+    padding-top: 6px;
+    padding-bottom: 6px;
+    margin-bottom: 6px;
+    background: white;
+    position: relative;
+}
+.el-form-item--default {
+    margin-bottom: 6px !important;
 }

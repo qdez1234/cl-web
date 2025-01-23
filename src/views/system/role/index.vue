@@ -1,92 +1,61 @@
 <template>
-  <div class="app-container">
-    <div class="ex-search-page">
-      <el-form :model="queryParams" ref="queryRef" v-show="showSearch" :inline="true" label-width="68px">
-        <el-form-item label="角色名称" prop="roleName">
-          <el-input v-model="queryParams.roleName" placeholder="请输入角色名称" clearable style="width: 240px"
-            @keyup.enter="handleQuery" />
-        </el-form-item>
-        <el-form-item label="权限字符" prop="roleKey">
-          <el-input v-model="queryParams.roleKey" placeholder="请输入权限字符" clearable style="width: 240px"
-            @keyup.enter="handleQuery" />
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-select v-model="queryParams.status" placeholder="角色状态" clearable style="width: 240px">
-            <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="创建时间" style="width: 308px">
-          <el-date-picker v-model="dateRange" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
-            start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
-      </el-form>
+  <div class="ex-page-container">
+    <div class="container-left">
     </div>
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['system:role:add']">新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
-          v-hasPermi="['system:role:edit']">修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
-          v-hasPermi="['system:role:remove']">删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="warning" plain icon="Download" @click="handleExport"
-          v-hasPermi="['system:role:export']">导出</el-button>
-      </el-col>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+    <div class="container-right">
+      <div class="ex-search">
+        <el-form :model="queryParams" ref="queryForm" label-width="80px">
+          <el-row :gutter="20" class="ex-form-row">
+            <el-col :md="6">
+              <el-form-item label="角色名称" prop="roleName">
+                <el-input v-model="queryParams.roleName" placeholder="请输入角色名称" clearable @keyup.enter="handleQuery" />
+              </el-form-item>
+            </el-col>
+            <el-col :md="6">
+              <el-form-item label="角色编码" prop="roleKey">
+                <el-input v-model="queryParams.roleKey" placeholder="请输入角色编码" clearable @keyup.enter="handleQuery" />
+              </el-form-item>
+            </el-col>
+            <el-col :md="6">
+              <el-form-item label="状态" prop="status">
+                <el-select v-model="queryParams.status" placeholder="角色状态" clearable @change="handleQuery"
+                  style="width: 100%">
+                  <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label"
+                    :value="dict.value" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :md="4">
+              <el-button class="filter-item" type="primary" @click="handleQuery">搜索</el-button>
+            </el-col>
+            <el-col :md="6">
+              <el-form-item label="创建时间" style="width: 100%">
+                <el-date-picker v-model="dateRange" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
+                  start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </div>
 
-    <!-- 表格数据 -->
-    <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="角色编号" prop="roleId" width="120" />
-      <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="权限字符" prop="roleKey" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="显示顺序" prop="roleSort" width="100" />
-      <el-table-column label="状态" align="center" width="100">
-        <template #default="scope">
-          <el-switch v-model="scope.row.status" active-value="0" inactive-value="1"
-            @change="handleStatusChange(scope.row)"></el-switch>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="createTime">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template #default="scope">
-          <el-tooltip content="修改" placement="top" v-if="scope.row.roleId !== 1">
-            <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-              v-hasPermi="['system:role:edit']"></el-button>
-          </el-tooltip>
-          <el-tooltip content="删除" placement="top" v-if="scope.row.roleId !== 1">
-            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-              v-hasPermi="['system:role:remove']"></el-button>
-          </el-tooltip>
-          <el-tooltip content="数据权限" placement="top" v-if="scope.row.roleId !== 1">
-            <el-button link type="primary" icon="CircleCheck" @click="handleDataScope(scope.row)"
-              v-hasPermi="['system:role:edit']"></el-button>
-          </el-tooltip>
-          <el-tooltip content="分配用户" placement="top" v-if="scope.row.roleId !== 1">
-            <el-button link type="primary" icon="User" @click="handleAuthUser(scope.row)"
-              v-hasPermi="['system:role:edit']"></el-button>
-          </el-tooltip>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
-      v-model:limit="queryParams.pageSize" @pagination="getList" />
-
+      <div class="ex-search">
+        <el-form :model="queryParams" ref="queryForm" label-width="80px">
+          <el-row :gutter="20" class="ex-form-row">
+            <el-col :md="20">
+              <el-button class="filter-item" v-hasPermi="['system:role:add']" type="primary" icon="Plus"
+                @click="handleAdd">新增</el-button>
+              <el-button class="filter-item" v-hasPermi="['system:role:remove']" type="danger" icon="Delete"
+                @click="handleBatchDelete">删除</el-button>
+            </el-col>
+          </el-row>
+        </el-form>
+      </div>
+      <div class="ex-table-page-body">
+        <AgTable class="AgTable" ref="gridRef" @HandleCellClick="HandleCellClick" :paging="true"
+          :gridColDefs="gridColDefs" gridMethdos="get" :gridActions="gridActions" :gridKey="route.path + 'list'"
+          :grildUrl="gridAPI" gridRowKey="roleId" rowSelection="multiple" :suppressRowClickSelection="true" />
+      </div>
+    </div>
     <!-- 添加或修改角色配置对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="roleRef" :model="form" :rules="rules" label-width="100px">
@@ -166,7 +135,11 @@
         </div>
       </template>
     </el-dialog>
+
+
   </div>
+
+
 </template>
 
 <script setup name="Role">
@@ -176,6 +149,116 @@ import { roleMenuTreeselect, treeselect as menuTreeselect } from "@/api/system/m
 const router = useRouter();
 const { proxy } = getCurrentInstance();
 const { sys_normal_disable } = proxy.useDict("sys_normal_disable");
+const { sys_notice_status, sys_notice_type } = proxy.useDict("sys_notice_status", "sys_notice_type");
+
+const gridRef = ref(null)
+
+const gridAPI = ref("/system/role/list")
+
+const gridActions = ref([])
+
+const route = useRouter();
+
+const gridColDefs = ref([
+  {
+    minWidth: 50,
+    filter: false,
+    editable: false,
+    checkboxSelection: true,
+    suppressMenu: true, // 隐藏菜单
+    headerCheckboxSelection: true,
+  },
+  {
+    headerName: "序号",
+    isReadonly: true,
+    isShow: true,
+    valueGetter: (params) => {
+      return params.node.rowIndex + 1
+    },
+    filter: false, // 隐藏过滤条件
+    suppressMenu: true, // 隐藏菜单
+    minWidth: 70
+  },
+  {
+    headerName: "角色名称",
+    field: "roleName",
+    tooltipField: "roleName",
+  },
+  {
+    headerName: "角色编码",
+    field: "roleKey",
+    tooltipField: "roleKey",
+  },
+  {
+    headerName: "状态",
+    field: "status",
+    tooltipField: "status",
+    cellRenderer: "CustomDict",
+    cellRendererParams: {
+      "dict_key": "sys_normal_disable"
+    },
+  },
+  {
+    headerName: "创建时间",
+    field: "createTime",
+    tooltipField: "createTime",
+  },
+  {
+    headerName: "操作",
+    pinned: "right",
+    isShow: true,
+    filter: false,
+    suppressMenu: true,
+    cellRendererParams: {
+      buttonConfig: [
+        {
+          label: "修改",
+          type: "primary",
+          authentication: "system:role:edit",
+          fun: 1,
+        },
+        {
+          label: "删除",
+          type: "danger",
+          fun: 2,
+          authentication: "system:role:remove",
+        },
+        {
+          label: "编辑角色权限",
+          type: "primary",
+          fun: 3,
+          expression: "return params.roleId=='1'?false:true",
+          authentication: "system:role:edit",
+        },
+        {
+          label: "分配用户",
+          type: "primary",
+          fun: 4,
+          expression: "return params.roleId=='1'?false:true",
+          authentication: "system:role:edit",
+        },
+      ]
+    },
+    cellRenderer: "ActionButtons",
+    width: 300
+  }
+])
+const HandleCellClick = (fun, row) => {
+  let { data } = row
+  if (fun == 1) {
+    handleUpdate(data)
+  }
+  if (fun == 2) {
+    handleDelete(data)
+  }
+  if (fun == 3) {
+    handleDataScope(data)
+  }
+  if (fun == 4) {
+    handleAuthUser(data)
+  }
+}
+
 
 const roleList = ref([]);
 const open = ref(false);
@@ -226,12 +309,7 @@ const { queryParams, form, rules } = toRefs(data);
 
 /** 查询角色列表 */
 function getList() {
-  loading.value = true;
-  listRole(proxy.addDateRange(queryParams.value, dateRange.value)).then(response => {
-    roleList.value = response.rows;
-    total.value = response.total;
-    loading.value = false;
-  });
+  gridRef.value.HandleQueryData(queryParams.value)
 }
 
 /** 搜索按钮操作 */
@@ -246,10 +324,16 @@ function resetQuery() {
   proxy.resetForm("queryRef");
   handleQuery();
 }
-
+/**
+ * 批量删除
+ */
+function handleBatchDelete() {
+  let ids = gridRef.value.HandleGetSelectRow().map(ele => ele.roleId)
+  handleDelete({}, ids.join(','))
+}
 /** 删除按钮操作 */
-function handleDelete(row) {
-  const roleIds = row.roleId || ids.value;
+function handleDelete(row, ids) {
+  const roleIds = row.roleId || ids;
   proxy.$modal.confirm('是否确认删除角色编号为"' + roleIds + '"的数据项?').then(function () {
     return delRole(roleIds);
   }).then(() => {
@@ -507,6 +591,4 @@ function cancelDataScope() {
   openDataScope.value = false;
   reset();
 }
-
-getList();
 </script>

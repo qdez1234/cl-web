@@ -1,8 +1,9 @@
 <template>
-    <div class="tree-box ex-page-scroll-y" ref="treeBox" >
+    <div class="ex-tree-box ex-page-scroll-y" ref="treeBox">
         <el-input v-model="filterText" class="filterInput" />
-        <el-tree ref="treeRef" class="filter-tree ex-page-scroll-y" :data="treeData" :props="defaultProps" default-expand-all
-            node-key="id" highlight-current @node-click="HandleNodeClick" :filter-node-method="filterNode" />
+        <el-tree ref="treeRef" class="filter-tree ex-page-scroll-y" :data="treeData" :props="defaultProps"
+            default-expand-all node-key="id" highlight-current @node-click="HandleNodeClick"
+            :filter-node-method="filterNode" />
         <div class="resize-handle" @mousedown="startResize">
             <el-icon class="is-icon">
                 <el-icon>
@@ -64,6 +65,7 @@ export default {
         HandleNodeClick(node, data, event) {
             if (node.disabled) return
             this.activeRow = node;
+            this.$emit('HandleNodeClik', node)
             eval(this.params.code);  // 运行父组件传递的代码
         },
         HandleClick(num = 0) {
@@ -74,13 +76,13 @@ export default {
         },
         // API 获取数据
         HandleGetData() {
-            if(!this.url || this.url=='') return
+            if (!this.url || this.url == '') return
             request({
                 url: this.url,
-                method: 'post',
+                method: 'get',
                 data: {}
             }).then((res) => {
-                this.treeData = buildTree(res.data);
+                this.treeData = buildTree(res.data,'deptId');
             });
         },
 
@@ -125,7 +127,7 @@ export default {
         /**
          * 设置缓存宽度
          */
-        resetWidth(){
+        resetWidth() {
             const width = localStorage.getItem(`exTree${this.$route.path}`);
             this.$refs.treeBox.style.width = `${width}px`;
         }
@@ -147,15 +149,6 @@ export default {
 .filterInput {
     width: 100%;
     margin-bottom: 10px;
-}
-
-.tree-box {
-    width: 220px;
-    margin-right: 12px;
-    height: calc(100% - 40px);
-    padding: 10px;
-    background: white;
-    position: relative;
 }
 
 .resize-handle {

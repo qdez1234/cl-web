@@ -71,19 +71,19 @@ export const constantRoutes = [
     path: '/system/render',
     component: '',
     hidden: true,
-    meta: { title: '页面配置'},
+    meta: { title: '页面配置' },
     children: [
       {
         path: 'config',
         component: () => import('@/components/sys/LowCode/render/config'),
         name: 'renderConfig',
-        meta: { title: '页面配置'}
+        meta: { title: '页面配置' }
       },
       {
         path: 'language',
         component: () => import('@/components/sys/LowCode/MonacoEditor/index'),
         name: 'language',
-        meta: { title: '多语言配置'}
+        meta: { title: '多语言配置' }
       },
     ]
   },
@@ -113,22 +113,18 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
-  }
-]
-
-// 动态路由，基于用户权限动态去加载
-export const dynamicRoutes = [
+  },
   {
-    path: '/system/user-auth',
+    path: '/system/dict-data',
     component: Layout,
     hidden: true,
-    permissions: ['system:user:edit'],
+    permissions: ['system:dict:list'],
     children: [
       {
-        path: 'role/:userId(\\d+)',
-        component: () => import('@/views/system/user/authRole'),
-        name: 'AuthRole',
-        meta: { title: '分配角色', activeMenu: '/system/user' }
+        path: 'index/:dictId(\\d+)',
+        component: () => import('@/views/system/dict/data'),
+        name: 'Data',
+        meta: { title: '字典数据', activeMenu: '/system/dict' }
       }
     ]
   },
@@ -146,17 +142,21 @@ export const dynamicRoutes = [
       }
     ]
   },
+]
+
+// 动态路由，基于用户权限动态去加载
+export const dynamicRoutes = [
   {
-    path: '/system/dict-data',
+    path: '/system/user-auth',
     component: Layout,
     hidden: true,
-    permissions: ['system:dict:list'],
+    permissions: ['system:user:edit'],
     children: [
       {
-        path: 'index/:dictId(\\d+)',
-        component: () => import('@/views/system/dict/data'),
-        name: 'Data',
-        meta: { title: '字典数据', activeMenu: '/system/dict' }
+        path: 'role/:userId(\\d+)',
+        component: () => import('@/views/system/user/authRole'),
+        name: 'AuthRole',
+        meta: { title: '分配角色', activeMenu: '/system/user' }
       }
     ]
   },

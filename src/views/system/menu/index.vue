@@ -1,70 +1,50 @@
 <template>
-   <div class="app-container">
-      <div class="ex-search-page">
-         <el-form  :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
-            <el-form-item label="菜单名称" prop="menuName">
-               <el-input v-model="queryParams.menuName" placeholder="请输入菜单名称" clearable style="width: 200px"
-                  @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="状态" prop="status">
-               <el-select v-model="queryParams.status" placeholder="菜单状态" clearable style="width: 200px">
-                  <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label"
-                     :value="dict.value" />
-               </el-select>
-            </el-form-item>
-            <el-form-item>
-               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-            </el-form-item>
-         </el-form>
+
+   <div class="ex-page-container">
+      <div class="container-left">
       </div>
-      <el-row :gutter="10" class="mb8">
-         <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd"
-               v-hasPermi="['system:menu:add']">新增</el-button>
-         </el-col>
-         <el-col :span="1.5">
-            <el-button type="info" plain icon="Sort" @click="toggleExpandAll">展开/折叠</el-button>
-         </el-col>
-         <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
-      </el-row>
-
-      <el-table v-if="refreshTable" v-loading="loading" :data="menuList" row-key="menuId"
-         :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
-         <el-table-column prop="menuName" label="菜单名称" :show-overflow-tooltip="true" width="160"></el-table-column>
-         <el-table-column prop="icon" label="图标" align="center" width="100">
-            <template #default="scope">
-               <svg-icon :icon-class="scope.row.icon" />
-            </template>
-         </el-table-column>
-         <el-table-column prop="orderNum" label="排序" width="60"></el-table-column>
-         <el-table-column prop="perms" label="权限标识" :show-overflow-tooltip="true"></el-table-column>
-         <el-table-column prop="component" label="组件路径" :show-overflow-tooltip="true"></el-table-column>
-         <el-table-column prop="status" label="状态" width="80">
-            <template #default="scope">
-               <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
-            </template>
-         </el-table-column>
-         <el-table-column label="创建时间" align="center" width="160" prop="createTime">
-            <template #default="scope">
-               <span>{{ parseTime(scope.row.createTime) }}</span>
-            </template>
-         </el-table-column>
-         <el-table-column label="操作" align="center" width="210" class-name="small-padding fixed-width">
-            <template #default="scope">
-               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                  v-hasPermi="['system:menu:edit']">修改</el-button>
-               <el-button link type="primary" icon="Plus" @click="handleAdd(scope.row)"
-                  v-hasPermi="['system:menu:add']">新增</el-button>
-               <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-                  v-hasPermi="['system:menu:remove']">删除</el-button>
-               <el-button link type="primary" @click="handleSetPage(scope.row)" v-if="scope.row.menuType == 'C'"
-                  v-hasPermi="['system:menu:edit']">编辑页面</el-button>
-            </template>
-         </el-table-column>
-      </el-table>
-
-      <!-- 添加或修改菜单对话框 -->
+      <div class="container-right">
+         <div class="ex-search">
+            <el-form :model="queryParams" ref="queryForm" label-width="80px">
+               <el-row :gutter="20" class="ex-form-row">
+                  <el-col :md="6">
+                     <el-form-item label="菜单名称" prop="menuName">
+                        <el-input v-model="queryParams.menuName" placeholder="请输入菜单名称" clearable
+                           @keyup.enter="handleQuery" />
+                     </el-form-item>
+                  </el-col>
+                  <el-col :md="6">
+                     <el-form-item label="状态" prop="status">
+                        <el-select v-model="queryParams.status" placeholder="菜单状态" @change="handleQuery" clearable
+                           style="width: 100%">
+                           <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label"
+                              :value="dict.value" />
+                        </el-select>
+                     </el-form-item>
+                  </el-col>
+                  <el-col :md="4">
+                     <el-button class="filter-item" type="primary" @click="handleQuery">搜索</el-button>
+                  </el-col>
+               </el-row>
+            </el-form>
+         </div>
+         <div class="ex-search">
+            <el-form :model="queryParams" ref="queryForm" label-width="80px">
+               <el-row :gutter="20" class="ex-form-row">
+                  <el-col :md="20">
+                     <el-button class="filter-item" v-hasPermi="['system:menu:add']" type="primary" icon="Plus"
+                        @click="handleAdd">新增</el-button>
+                  </el-col>
+               </el-row>
+            </el-form>
+         </div>
+         <div class="ex-table-page-body">
+            <AgTable class="AgTable" ref="gridRef" :gridGroupParams='{ field: "menuName", headerName: "菜单名称" }'
+               :gridGroup="true" @HandleCellClick="HandleCellClick" :paging="true" :gridColDefs="gridColDefs"
+               gridMethdos="get" :gridActions="gridActions" :gridKey="route.path + 'list'" :grildUrl="gridAPI"
+               gridRowKey="menuId" rowSelection="multiple" :suppressRowClickSelection="true" />
+         </div>
+      </div>
       <el-dialog :title="title" v-model="open" width="680px" append-to-body>
          <el-form ref="menuRef" :model="form" :rules="rules" label-width="100px">
             <el-row>
@@ -281,6 +261,104 @@ import IconSelect from "@/components/IconSelect";
 const { proxy } = getCurrentInstance();
 const { sys_show_hide, sys_normal_disable } = proxy.useDict("sys_show_hide", "sys_normal_disable");
 
+
+const gridRef = ref(null)
+const gridAPI = ref("/system/menu/list")
+const gridActions = ref([])
+const route = useRoute();
+
+const treeParams = ref({
+   icon: 'icon-node-tree',
+   modelType: 'ex-tree',
+   label: "节点树",
+   API: "/api/import/list/ImportSysDept",
+   propsLabel: 'deptName',
+})
+const gridColDefs = ref([
+   {
+      headerName: "排序",
+      field: "orderNum",
+      tooltipField: "orderNum",
+   },
+   {
+      headerName: "权限标识",
+      field: "perms",
+      tooltipField: "perms",
+   },
+   {
+      headerName: "组件路径",
+      field: "component",
+      tooltipField: "component",
+   },
+   {
+      headerName: "状态",
+      field: "status",
+      tooltipField: "status",
+      cellRenderer: "CustomDict",
+      cellRendererParams: {
+         "dict_key": "sys_normal_disable"
+      },
+   },
+   {
+      headerName: "创建时间",
+      field: "createTime",
+      tooltipField: "createTime",
+   },
+   {
+      headerName: "操作",
+      pinned: "right",
+      isShow: true,
+      filter: false,
+      suppressMenu: true,
+      cellRendererParams: {
+         buttonConfig: [
+            {
+               label: "修改",
+               type: "primary",
+               authentication: "system:menu:edit",
+               fun: 1,
+            },
+            {
+               label: "新增",
+               type: "primary",
+               authentication: "system:menu:add",
+               fun: 2,
+            },
+            {
+               label: "删除",
+               type: "danger",
+               fun: 3,
+               authentication: "system:menu:remove",
+            },
+            {
+               label: "编辑页面",
+               type: "success",
+               fun: 4,
+               expression: "return params.menuType=='C'?true:false",
+               authentication: "system:menu:edit",
+            },
+         ]
+      },
+      cellRenderer: "ActionButtons",
+      width: 300
+   }
+])
+const HandleCellClick = (fun, row) => {
+   let { data } = row
+   if (fun == 1) {
+      handleUpdate(data)
+   }
+   if (fun == 2) {
+      handleAdd(data)
+   }
+   if (fun == 3) {
+      handleDelete(data)
+   }
+   if (fun == 4) {
+      handleSetPage(data)
+   }
+}
+
 const menuList = ref([]);
 const open = ref(false);
 const loading = ref(true);
@@ -309,13 +387,8 @@ const { queryParams, form, rules } = toRefs(data);
 
 /** 查询菜单列表 */
 function getList() {
-   loading.value = true;
-   listMenu(queryParams.value).then(response => {
-      menuList.value = proxy.handleTree(response.data, "menuId");
-      loading.value = false;
-   });
+  gridRef.value.HandleQueryData(queryParams.value)
 }
-
 /** 查询菜单下拉树结构 */
 function getTreeselect() {
    menuOptions.value = [];
@@ -398,7 +471,7 @@ function toggleExpandAll() {
  */
 
 function handleSetPage(row) {
-   router.push({ path: "/system/render/config", query: { id: row.menuId, name: row.menuName,businessModelCode:row.modelId } });
+   router.push({ path: "/system/render/config", query: { id: row.menuId, name: row.menuName, businessModelCode: row.modelId } });
 }
 /** 修改按钮操作 */
 async function handleUpdate(row) {
@@ -441,6 +514,4 @@ function handleDelete(row) {
       proxy.$modal.msgSuccess("删除成功");
    }).catch(() => { });
 }
-
-getList();
 </script>

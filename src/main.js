@@ -27,7 +27,7 @@ import './permission' // permission control
 
 import "@/assets/styles/ex-ui.scss"
 
-import { useDict } from '@/utils/dict'
+import { useDict,getDictValue } from '@/utils/dict'
 import { parseTime, resetForm, addDateRange, handleTree, selectDictLabel, selectDictLabels } from '@/utils/ruoyi'
 import { useI18n } from 'vue-i18n';
 
@@ -71,6 +71,8 @@ const app = createApp(App)
 
 // 全局方法挂载
 app.config.globalProperties.useDict = useDict
+app.config.globalProperties.getDictValue = getDictValue
+
 app.config.globalProperties.download = download
 app.config.globalProperties.parseTime = parseTime
 app.config.globalProperties.resetForm = resetForm

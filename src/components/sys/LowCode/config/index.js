@@ -207,25 +207,25 @@ export function sorted(data, key) {
  * @param {*} flatData 
  * @returns 
  */
-export function buildTree(departmentData) {
+export function buildTree(departmentData,key='id') {
     const map = {}; // 用于存储每个部门的引用
     const tree = []; // 最终的树结构
 
     // 1. 创建一个映射表，将每个部门按 `id` 存入 map
     departmentData.forEach(item => {
-        item.disabled = item.status == '0' ? true : false
-        map[item.id] = { ...item, children: [] }; // 为每个部门初始化 `children` 数组
+        item.disabled = item.status == '0' ? false : true
+        map[item[key]] = { ...item, children: [] }; // 为每个部门初始化 `children` 数组
     });
 
     // 2. 遍历部门数据，构建树结构
     departmentData.forEach(item => {
         if (item.parentId == "0") {
             // 如果 `parentId` 为 "0"，说明是根节点，直接放入树结构中
-            tree.push(map[item.id]);
+            tree.push(map[item[key]]);
         } else {
             // 否则，将该部门添加到它的父部门的 `children` 数组中
             if (map[item.parentId]) {
-                map[item.parentId].children.push(map[item.id]);
+                map[item.parentId].children.push(map[item[key]]);
             }
         }
     });

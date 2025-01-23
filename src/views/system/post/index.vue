@@ -1,75 +1,55 @@
 <template>
-   <div class="app-container">
-      <div class="ex-search-page">
-         <el-form  :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
-            <el-form-item label="岗位编码" prop="postCode">
-               <el-input v-model="queryParams.postCode" placeholder="请输入岗位编码" clearable style="width: 200px"
-                  @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="岗位名称" prop="postName">
-               <el-input v-model="queryParams.postName" placeholder="请输入岗位名称" clearable style="width: 200px"
-                  @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="状态" prop="status">
-               <el-select v-model="queryParams.status" placeholder="岗位状态" clearable style="width: 200px">
-                  <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label"
-                     :value="dict.value" />
-               </el-select>
-            </el-form-item>
-            <el-form-item>
-               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-            </el-form-item>
-         </el-form>
+   <div class="ex-page-container">
+      <div class="container-left">
       </div>
-      <el-row :gutter="10" class="mb8">
-         <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd"
-               v-hasPermi="['system:post:add']">新增</el-button>
-         </el-col>
-         <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
-               v-hasPermi="['system:post:edit']">修改</el-button>
-         </el-col>
-         <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
-               v-hasPermi="['system:post:remove']">删除</el-button>
-         </el-col>
-         <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport"
-               v-hasPermi="['system:post:export']">导出</el-button>
-         </el-col>
-         <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
-      </el-row>
-
-      <el-table v-loading="loading" :data="postList" @selection-change="handleSelectionChange">
-         <el-table-column type="selection" width="55" align="center" />
-         <el-table-column label="岗位编号" align="center" prop="postId" />
-         <el-table-column label="岗位编码" align="center" prop="postCode" />
-         <el-table-column label="岗位名称" align="center" prop="postName" />
-         <el-table-column label="岗位排序" align="center" prop="postSort" />
-         <el-table-column label="状态" align="center" prop="status">
-            <template #default="scope">
-               <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
-            </template>
-         </el-table-column>
-         <el-table-column label="创建时间" align="center" prop="createTime" width="180">
-            <template #default="scope">
-               <span>{{ parseTime(scope.row.createTime) }}</span>
-            </template>
-         </el-table-column>
-         <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
-            <template #default="scope">
-               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                  v-hasPermi="['system:post:edit']">修改</el-button>
-               <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-                  v-hasPermi="['system:post:remove']">删除</el-button>
-            </template>
-         </el-table-column>
-      </el-table>
-
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
-         v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <div class="container-right">
+         <div class="ex-search">
+            <el-form :model="queryParams" ref="queryForm" label-width="80px">
+               <el-row :gutter="20" class="ex-form-row">
+                  <el-col :md="6">
+                     <el-form-item label="岗位编码" prop="postCode">
+                        <el-input v-model="queryParams.postCode" placeholder="请输入岗位编码" clearable style="width: 200px"
+                           @keyup.enter="handleQuery" />
+                     </el-form-item>
+                  </el-col>
+                  <el-col :md="6">
+                     <el-form-item label="岗位名称" prop="postName">
+                        <el-input v-model="queryParams.postName" placeholder="请输入岗位名称" clearable style="width: 200px"
+                           @keyup.enter="handleQuery" />
+                     </el-form-item>
+                  </el-col>
+                  <el-col :md="6">
+                     <el-form-item label="状态" prop="status">
+                        <el-select v-model="queryParams.status" placeholder="岗位状态" clearable style="width: 200px">
+                           <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label"
+                              :value="dict.value" />
+                        </el-select>
+                     </el-form-item>
+                  </el-col>
+                  <el-col :md="4">
+                     <el-button class="filter-item" type="primary" @click="handleQuery">搜索</el-button>
+                  </el-col>
+               </el-row>
+            </el-form>
+         </div>
+         <div class="ex-search">
+            <el-form :model="queryParams" ref="queryForm" label-width="80px">
+               <el-row :gutter="20" class="ex-form-row">
+                  <el-col :md="20">
+                     <el-button class="filter-item" v-hasPermi="['system:post:add']" type="primary" icon="Plus"
+                        @click="handleAdd">新增</el-button>
+                     <el-button class="filter-item" v-hasPermi="['system:post:remove']" type="danger" icon="Delete"
+                        @click="handleBatchDelete">删除</el-button>
+                  </el-col>
+               </el-row>
+            </el-form>
+         </div>
+         <div class="ex-table-page-body">
+            <AgTable class="AgTable" ref="gridRef" @HandleCellClick="HandleCellClick" :paging="true"
+               :gridColDefs="gridColDefs" gridMethdos="get" :gridActions="gridActions" :gridKey="route.path + 'list'"
+               :grildUrl="gridAPI" gridRowKey="postId" rowSelection="multiple" :suppressRowClickSelection="true" />
+         </div>
+      </div>
 
       <!-- 添加或修改岗位对话框 -->
       <el-dialog :title="title" v-model="open" width="500px" append-to-body>
@@ -107,7 +87,106 @@
 import { listPost, addPost, delPost, getPost, updatePost } from "@/api/system/post";
 
 const { proxy } = getCurrentInstance();
+
 const { sys_normal_disable } = proxy.useDict("sys_normal_disable");
+
+const gridRef = ref(null)
+
+const gridAPI = ref("/system/post/list")
+
+const gridActions = ref([])
+
+const route = useRouter();
+
+const gridColDefs = ref([
+   {
+      minWidth: 50,
+      filter: false,
+      editable: false,
+      checkboxSelection: true,
+      suppressMenu: true, // 隐藏菜单
+      headerCheckboxSelection: true,
+   },
+   {
+      headerName: "序号",
+      isReadonly: true,
+      isShow: true,
+      valueGetter: (params) => {
+         return params.node.rowIndex + 1
+      },
+      filter: false, // 隐藏过滤条件
+      suppressMenu: true, // 隐藏菜单
+      minWidth: 70
+   },
+   {
+      headerName: "岗位编号",
+      field: "postId",
+      tooltipField: "postId",
+   },
+   {
+      headerName: "岗位编码",
+      field: "postCode",
+      tooltipField: "postCode",
+   },
+   {
+      headerName: "岗位编码",
+      field: "postName",
+      tooltipField: "postName",
+   },
+   {
+      headerName: "岗位排序",
+      field: "postSort",
+      tooltipField: "postSort",
+   },
+   {
+      headerName: "状态",
+      field: "status",
+      tooltipField: "status",
+      cellRenderer: "CustomDict",
+      cellRendererParams: {
+         "dict_key": "sys_normal_disable"
+      },
+   },
+   {
+      headerName: "创建时间",
+      field: "createTime",
+      tooltipField: "createTime",
+   },
+   {
+      headerName: "操作",
+      pinned: "right",
+      isShow: true,
+      filter: false,
+      suppressMenu: true,
+      cellRendererParams: {
+         buttonConfig: [
+            {
+               label: "修改",
+               type: "primary",
+               authentication: "system:post:edit",
+               fun: 1,
+            },
+            {
+               label: "删除",
+               type: "danger",
+               fun: 2,
+               authentication: "system:post:remove",
+            },
+         ]
+      },
+      cellRenderer: "ActionButtons",
+      width: 300
+   }
+])
+const HandleCellClick = (fun, row) => {
+   let { data } = row
+   if (fun == 1) {
+      handleUpdate(data)
+   }
+   if (fun == 2) {
+      handleDelete(data)
+   }
+}
 
 const postList = ref([]);
 const open = ref(false);
@@ -137,14 +216,9 @@ const data = reactive({
 
 const { queryParams, form, rules } = toRefs(data);
 
-/** 查询岗位列表 */
+/** 查询参数列表 */
 function getList() {
-   loading.value = true;
-   listPost(queryParams.value).then(response => {
-      postList.value = response.rows;
-      total.value = response.total;
-      loading.value = false;
-   });
+   gridRef.value.HandleQueryData(queryParams.value)
 }
 
 /** 取消按钮 */
@@ -224,9 +298,13 @@ function submitForm() {
    });
 }
 
+function handleBatchDelete() {
+   let ids = gridRef.value.HandleGetSelectRow().map(ele => ele.postId)
+   handleDelete({}, ids.join(','))
+}
 /** 删除按钮操作 */
-function handleDelete(row) {
-   const postIds = row.postId || ids.value;
+function handleDelete(row, ids) {
+   const postIds = row.postId || ids
    proxy.$modal.confirm('是否确认删除岗位编号为"' + postIds + '"的数据项？').then(function () {
       return delPost(postIds);
    }).then(() => {
@@ -241,6 +319,4 @@ function handleExport() {
       ...queryParams.value
    }, `post_${new Date().getTime()}.xlsx`);
 }
-
-getList();
 </script>
