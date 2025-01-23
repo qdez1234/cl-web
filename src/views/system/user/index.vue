@@ -320,7 +320,13 @@ const HandleCellClick = (fun, row) => {
 }
 
 
-
+/**
+ * 点击当前行节点
+ * @param row 
+ */
+ const HandleNodeClik = (row) => {
+    handleNodeClick(row)
+}
 
 
 const userList = ref([]);
@@ -425,7 +431,7 @@ function filterDisabledDept(deptList) {
 
 /** 节点单击事件 */
 function handleNodeClick(data) {
-    queryParams.value.deptId = data.id;
+    queryParams.value.deptId = data.deptId;
     handleQuery();
 };
 
