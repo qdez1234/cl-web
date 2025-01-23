@@ -1,79 +1,113 @@
 <template>
-   <div class="app-container">
-      <div class="ex-search-page">
-
-         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-            <el-form-item label="登录地址" prop="ipaddr">
+   <div class="ex-page-container">
+      <div class="container-left">
+      </div>
+      <div class="container-right">
+         <div class="ex-search">
+            <el-form :model="queryParams" ref="queryForm" label-width="80px">
+               <el-row :gutter="20" class="ex-form-row">
+                  <el-col :md="6">
+                     <el-form-item label="登录地址" prop="ipaddr">
                <el-input v-model="queryParams.ipaddr" placeholder="请输入登录地址" clearable style="width: 240px;"
                   @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="用户名称" prop="userName">
+                  </el-col>
+                  <el-col :md="6">
+                     <el-form-item label="用户名称" prop="userName">
                <el-input v-model="queryParams.userName" placeholder="请输入用户名称" clearable style="width: 240px;"
                   @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="状态" prop="status">
+                  </el-col>
+                  <el-col :md="6">
+                     <el-form-item label="状态" prop="status">
                <el-select v-model="queryParams.status" placeholder="登录状态" clearable style="width: 240px">
                   <el-option v-for="dict in sys_common_status" :key="dict.value" :label="dict.label"
                      :value="dict.value" />
                </el-select>
             </el-form-item>
-            <el-form-item label="登录时间" style="width: 308px">
+                  </el-col>
+                  <el-col :md="6">
+                     <el-form-item label="登录时间">
                <el-date-picker v-model="dateRange" value-format="YYYY-MM-DD HH:mm:ss" type="daterange"
                   range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"
                   :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"></el-date-picker>
             </el-form-item>
-            <el-form-item>
-               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-            </el-form-item>
-         </el-form>
+                  </el-col>
+                  <el-col :md="4">
+                     <el-button class="filter-item" type="primary" @click="handleQuery">搜索</el-button>
+                  </el-col>
+               </el-row>
+            </el-form>
+         </div>
+
+         <div class="ex-search">
+            <el-form :model="queryParams" ref="queryForm" label-width="80px">
+               <el-row :gutter="20" class="ex-form-row">
+                  <el-col :md="20">
+                     <el-button class="filter-item" v-hasPermi="['monitor:logininfor:remove']" type="primary" icon="Delete"
+                        @click="handleBatchDelete">删除</el-button>
+                     <el-button class="filter-item" v-hasPermi="['monitor:logininfor:remove']" type="primary" icon="Delete"
+                        @click="handleClean">清空</el-button>
+                        <el-button class="filter-item" v-hasPermi="['monitor:logininfor:unlock']" type="primary" icon="Unlock"
+                        @click="handleUnlock">解锁</el-button>
+                     <el-button class="filter-item" v-hasPermi="['monitor:logininfor:export']" type="primary" icon="Download"
+                        @click="handleExport">导出</el-button>
+                  </el-col>
+               </el-row>
+            </el-form>
+         </div>
+         <div class="ex-table-page-body">
+            <AgTable class="AgTable" ref="gridRef" @HandleCellClick="HandleCellClick" :paging="true"
+               :gridColDefs="gridColDefs" gridMethdos="get" :gridActions="gridActions" :gridKey="route.path + 'list'"
+               :grildUrl="gridAPI" gridRowKey="infoId" rowSelection="multiple" :suppressRowClickSelection="true" />
+         </div>
       </div>
-      <el-row :gutter="10" class="mb8">
-         <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
-               v-hasPermi="['monitor:logininfor:remove']">删除</el-button>
-         </el-col>
-         <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" @click="handleClean"
-               v-hasPermi="['monitor:logininfor:remove']">清空</el-button>
-         </el-col>
-         <el-col :span="1.5">
-            <el-button type="primary" plain icon="Unlock" :disabled="single" @click="handleUnlock"
-               v-hasPermi="['monitor:logininfor:unlock']">解锁</el-button>
-         </el-col>
-         <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport"
-               v-hasPermi="['monitor:logininfor:export']">导出</el-button>
-         </el-col>
-         <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
-      </el-row>
 
-      <el-table ref="logininforRef" v-loading="loading" :data="logininforList" @selection-change="handleSelectionChange"
-         :default-sort="defaultSort" @sort-change="handleSortChange">
-         <el-table-column type="selection" width="55" align="center" />
-         <el-table-column label="访问编号" align="center" prop="infoId" />
-         <el-table-column label="用户名称" align="center" prop="userName" :show-overflow-tooltip="true" sortable="custom"
-            :sort-orders="['descending', 'ascending']" />
-         <el-table-column label="地址" align="center" prop="ipaddr" :show-overflow-tooltip="true" />
-         <el-table-column label="登录地点" align="center" prop="loginLocation" :show-overflow-tooltip="true" />
-         <el-table-column label="操作系统" align="center" prop="os" :show-overflow-tooltip="true" />
-         <el-table-column label="浏览器" align="center" prop="browser" :show-overflow-tooltip="true" />
-         <el-table-column label="登录状态" align="center" prop="status">
-            <template #default="scope">
-               <dict-tag :options="sys_common_status" :value="scope.row.status" />
-            </template>
-         </el-table-column>
-         <el-table-column label="描述" align="center" prop="msg" :show-overflow-tooltip="true" />
-         <el-table-column label="访问时间" align="center" prop="loginTime" sortable="custom"
-            :sort-orders="['descending', 'ascending']" width="180">
-            <template #default="scope">
-               <span>{{ parseTime(scope.row.loginTime) }}</span>
-            </template>
-         </el-table-column>
-      </el-table>
-
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
-         v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <!-- 操作日志详细 -->
+      <el-dialog title="操作日志详细" v-model="open" width="800px" append-to-body>
+         <el-form :model="form" label-width="100px">
+            <el-row>
+               <el-col :span="12">
+                  <el-form-item label="操作模块：">{{ form.title }} / {{ typeFormat(form) }}</el-form-item>
+                  <el-form-item label="登录信息：">{{ form.operName }} / {{ form.operIp }} / {{ form.operLocation
+                     }}</el-form-item>
+               </el-col>
+               <el-col :span="12">
+                  <el-form-item label="请求地址：">{{ form.operUrl }}</el-form-item>
+                  <el-form-item label="请求方式：">{{ form.requestMethod }}</el-form-item>
+               </el-col>
+               <el-col :span="24">
+                  <el-form-item label="操作方法：">{{ form.method }}</el-form-item>
+               </el-col>
+               <el-col :span="24">
+                  <el-form-item label="请求参数：">{{ form.operParam }}</el-form-item>
+               </el-col>
+               <el-col :span="24">
+                  <el-form-item label="返回参数：">{{ form.jsonResult }}</el-form-item>
+               </el-col>
+               <el-col :span="8">
+                  <el-form-item label="操作状态：">
+                     <div v-if="form.status === 0">正常</div>
+                     <div v-else-if="form.status === 1">失败</div>
+                  </el-form-item>
+               </el-col>
+               <el-col :span="8">
+                  <el-form-item label="消耗时间：">{{ form.costTime }}毫秒</el-form-item>
+               </el-col>
+               <el-col :span="8">
+                  <el-form-item label="操作时间：">{{ parseTime(form.operTime) }}</el-form-item>
+               </el-col>
+               <el-col :span="24">
+                  <el-form-item label="异常信息：" v-if="form.status === 1">{{ form.errorMsg }}</el-form-item>
+               </el-col>
+            </el-row>
+         </el-form>
+         <template #footer>
+            <div class="dialog-footer">
+               <el-button @click="open = false">关 闭</el-button>
+            </div>
+         </template>
+      </el-dialog>
    </div>
 </template>
 
@@ -82,6 +116,90 @@ import { list, delLogininfor, cleanLogininfor, unlockLogininfor } from "@/api/mo
 
 const { proxy } = getCurrentInstance();
 const { sys_common_status } = proxy.useDict("sys_common_status");
+const gridRef = ref(null)
+
+const gridAPI = ref("/monitor/logininfor/list")
+
+const gridActions = ref([])
+
+const route = useRouter();
+
+const gridColDefs = ref([
+   {
+      minWidth: 50,
+      filter: false,
+      editable: false,
+      checkboxSelection: true,
+      suppressMenu: true, // 隐藏菜单
+      headerCheckboxSelection: true,
+   },
+   {
+      headerName: "序号",
+      isReadonly: true,
+      isShow: true,
+      valueGetter: (params) => {
+         return params.node.rowIndex + 1
+      },
+      filter: false, // 隐藏过滤条件
+      suppressMenu: true, // 隐藏菜单
+      minWidth: 70
+   },
+   {
+      headerName: "访问编号",
+      field: "infoId",
+      tooltipField: "infoId",
+   },
+   {
+      headerName: "用户名称",
+      field: "userName",
+      tooltipField: "userName",
+   },
+   {
+      headerName: "地址",
+      field: "ipaddr",
+      tooltipField: "ipaddr",
+   },
+   {
+      headerName: "登录地点",
+      field: "loginLocation",
+      tooltipField: "loginLocation",
+   },
+   {
+      headerName: "操作系统",
+      field: "os",
+      tooltipField: "os",
+   },
+   {
+      headerName: "浏览器",
+      field: "browser",
+      tooltipField: "browser",
+   },
+   {
+      headerName: "登录状态",
+      field: "status",
+      tooltipField: "status",
+      cellRenderer: "CustomDict",
+      cellRendererParams: {
+         "dict_key": "sys_common_status"
+      },
+   },
+   {
+      headerName: "描述",
+      field: "msg",
+      tooltipField: "msg",
+   },
+   {
+      headerName: "访问时间",
+      field: "loginTime",
+      tooltipField: "loginTime",
+   },
+])
+const HandleCellClick = (fun, row) => {
+   let { data } = row
+
+}
+
+
 
 const logininforList = ref([]);
 const loading = ref(true);
@@ -105,14 +223,9 @@ const queryParams = ref({
    isAsc: undefined
 });
 
-/** 查询登录日志列表 */
+/** 查询角色列表 */
 function getList() {
-   loading.value = true;
-   list(proxy.addDateRange(queryParams.value, dateRange.value)).then(response => {
-      logininforList.value = response.rows;
-      total.value = response.total;
-      loading.value = false;
-   });
+  gridRef.value.HandleQueryData(queryParams.value)
 }
 
 /** 搜索按钮操作 */
@@ -144,9 +257,14 @@ function handleSortChange(column, prop, order) {
    getList();
 }
 
+function handleBatchDelete() {
+  let ids = gridRef.value.HandleGetSelectRow().map(ele => ele.infoId)
+  handleDelete({}, ids.join(','))
+}
+
 /** 删除按钮操作 */
-function handleDelete(row) {
-   const infoIds = row.infoId || ids.value;
+function handleDelete(row,ids) {
+   const infoIds = row.infoId || ids;
    proxy.$modal.confirm('是否确认删除访问编号为"' + infoIds + '"的数据项?').then(function () {
       return delLogininfor(infoIds);
    }).then(() => {
@@ -182,5 +300,4 @@ function handleExport() {
    }, `logininfor_${new Date().getTime()}.xlsx`);
 }
 
-getList();
 </script>
