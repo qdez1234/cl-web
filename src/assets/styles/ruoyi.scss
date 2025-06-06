@@ -24,7 +24,6 @@
 }
 .mb8 {
 	margin-bottom: 8px;
-	margin-top: 8px;
 }
 .ml5 {
 	margin-left: 5px;
@@ -95,10 +94,10 @@
 
 /** 表格布局 **/
 .pagination-container {
-    padding: 10px;
-	background: white;
-    display: flex;
-    justify-content: end;
+	// position: relative;
+	margin-bottom: 8px;
+	margin-top: 12px;
+	padding: 0 !important;
 }
 
 /* tree border */

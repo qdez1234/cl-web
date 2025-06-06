@@ -25,6 +25,14 @@ export function getDept(deptId) {
   })
 }
 
+// 查询部门详细
+export function getDeptC(deptId) {
+  return request({
+    url: '/sys/dept/' + deptId,
+    method: 'get'
+  })
+}
+
 // 新增部门
 export function addDept(data) {
   return request({

@@ -1,10 +1,10 @@
 <template>
   <div class="container">
 
-    <div :class="['actionBox', props.PageDisabled ? 'pageNone' : '']">
+    <div :class="['actionBox', props.PageDisabled ? 'pageNone' : '']" v-if="props.gridActions.length > 0">
       <template v-for="(btn, index) in props.gridActions" :key="index">
         <template v-if="btn.config && Object.keys(btn.config).length > 0">
-          <ex-report :params="btn" model="report" @update:report="HandleUpdateReport"
+          <ex-report :params="btn" model="report" @update:report="HandleUpdateReport" :link="false"
             :PageDisabled="props.PageDisabled" />
         </template>
         <template v-else>
@@ -226,7 +226,7 @@ const autoGroupColumnDef = ref({
  * id节点标识
  * @param params 
  */
- const getRowId = (params) => {
+const getRowId = (params) => {
   let key = params.data[props.gridRowKey]
   if (key !== undefined && key !== null) {
     return String(key)
@@ -478,7 +478,7 @@ const sendDataAPI = () => {
     pageTotal.value = res.total
     // 开启扁平化分组
     if (props.gridGroup) data = addAncestors(data, props.gridRowKey)
-    console.log(data,'数据')
+    console.log(data, '数据')
     rowData.value = data
     gridApi.value.refreshCells();
     emit("HandleChange", res.data);

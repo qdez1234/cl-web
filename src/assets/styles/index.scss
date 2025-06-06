@@ -124,16 +124,17 @@ aside {
 
 //main-container全局样式
 .app-container {
-  padding: 8px 12px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  padding: 12px;
 }
+
 .components-container {
   margin: 30px 50px;
   position: relative;
 }
 
+.pagination-container {
+  margin-top: 30px;
+}
 
 .text-center {
   text-align: center
@@ -191,6 +192,7 @@ aside {
 .multiselect--active {
   z-index: 1000 !important;
 }
+
 /* 自定义表头的样式 */
 .agRequire::after {
   content: "*";
@@ -199,14 +201,34 @@ aside {
   position: absolute;
   left: 0;
 }
-.ag-cell-error{
+
+.ag-cell-error {
   background: rgb(219 12 12 / 5%);
 }
+
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 input[type=number] {
-  -moz-appearance: textfield; /* Firefox */
+  -moz-appearance: textfield;
+  /* Firefox */
+}
+
+:root {
+  --el-component-size: 28px !important;
+  /* 例如，将默认尺寸改为 40px */
+  --el-dialog-padding-primary: 12px !important;
+}
+.el-upload-list--picture-card{
+  --el-upload-list-picture-card-size: 122px !important;
+}
+.el-upload--picture-card {
+  --el-upload-picture-card-size: 122px !important;
+}
+
+.el-dialog {
+  --el-dialog-padding-primary: 12px !important;
 }

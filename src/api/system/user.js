@@ -26,7 +26,14 @@ export function addUser(data) {
     data: data
   })
 }
-
+// 新增用户
+export function addUserC(data) {
+  return request({
+    url: '/sys/user/add',
+    method: 'post',
+    data: data
+  })
+}
 // 修改用户
 export function updateUser(data) {
   return request({
@@ -35,7 +42,14 @@ export function updateUser(data) {
     data: data
   })
 }
-
+// 修改用户
+export function updateUserC(data) {
+  return request({
+    url: '/sys/user/edit',
+    method: 'put',
+    data: data
+  })
+}
 // 删除用户
 export function delUser(userId) {
   return request({
